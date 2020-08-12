@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/back8"
+    tools:context=".SellActivity">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="SELECT A CATEGORY "
+        android:gravity="center"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:background="#3DB7C6"/>
+
+    <GridView
+        android:id="@+id/gridview"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="30dp"
+        android:numColumns="2"
+        android:horizontalSpacing="30dp"
+        android:verticalSpacing="30dp"
+        >
+
+    </GridView>
+</LinearLayout>

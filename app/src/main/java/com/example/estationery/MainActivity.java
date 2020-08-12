@@ -1,0 +1,238 @@
+package com.example.estationery;
+
+import android.content.Intent;
+import androidx.annotation.NonNull;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
+
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+import androidx.appcompat.widget.Toolbar;
+
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+public class MainActivity extends AppCompatActivity {
+    GridView gridView;
+
+    TextView profileName;
+    private DrawerLayout dl;
+    private ActionBarDrawerToggle t;
+    private NavigationView nv;
+    View header;
+    String[] itemName = {"Books", "Drafter", "SheetHolder", "Cycle", "Sports Equipment", "Bags"};
+    int[] itemImages = {R.drawable.book, R.drawable.drafter, R.drawable.sheet_holder, R.drawable.cycle, R.drawable.sports, R.drawable.bags};
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.navigation_drawer);
+
+
+        dl = findViewById(R.id.activity_main);
+        t = new ActionBarDrawerToggle(this, dl, R.string.Open, R.string.Close);
+
+        dl.addDrawerListener(t);
+        t.syncState();
+
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setUserName();
+
+        nv = findViewById(R.id.nv);
+        header=nv.getHeaderView(0);
+
+        profileName=(TextView) header.findViewById(R.id.profileName);
+
+        nv.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int id = item.getItemId();
+                switch (id) {
+                    case R.id.account:
+                        Toast.makeText(MainActivity.this, "My Account", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.settings:
+                        Toast.makeText(MainActivity.this, "Settings", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.mycart:
+                        Toast.makeText(MainActivity.this, "My Cart", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.signOut:
+
+                        AuthUI.getInstance()
+                                .signOut(MainActivity.this)
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        signOut();
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(MainActivity.this, "" + e.getMessage(), Toast.LENGTH_LONG).show();
+                            }
+                        });
+
+                        Toast.makeText(MainActivity.this, "Sign Out", Toast.LENGTH_SHORT).show();
+                        break;
+                    default:
+                        return true;
+                }
+
+
+                return true;
+
+            }
+        });
+
+
+        FloatingActionButton fab = findViewById(R.id.floatingActionButton);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+                Intent sellIntent = new Intent(MainActivity.this, SellActivity.class);
+                startActivity(sellIntent);
+
+            }
+        });
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+
+
+        gridView = findViewById(R.id.gridview);
+        gridView.setNestedScrollingEnabled(true);
+
+
+        CustomAdapter customAdapter = new CustomAdapter();
+        gridView.setAdapter(customAdapter);
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                Intent adIntent= new Intent(MainActivity.this,BuyActivity.class);
+                adIntent.putExtra("catName",itemName[i]);
+                startActivity(adIntent);
+                //Toast.makeText(getApplicationContext(), fruitNames[i], Toast.LENGTH_LONG).show();
+
+            }
+        });
+
+
+    }
+    public void setUserName() {
+
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        String uId = currentUser.getUid();
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users").child(uId);
+
+
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                userClass user = dataSnapshot.getValue(userClass.class);
+
+                profileName.setText(user.userName);
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e("error", "cant set username");
+            }
+        });
+    }
+
+
+        private void signOut() {
+        startActivity(new Intent(this, LoginActivity.class));
+        finish();
+    }
+
+    private class CustomAdapter extends BaseAdapter {
+        @Override
+        public int getCount() {
+            return itemImages.length;
+        }
+
+        @Override
+        public Object getItem(int i) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int i) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int i, View view, ViewGroup viewGroup) {
+            View view1 = getLayoutInflater().inflate(R.layout.item, null);
+            //getting view in row_data
+            TextView name = view1.findViewById(R.id.fruits);
+            ImageView image = view1.findViewById(R.id.images);
+            name.setText(itemName[i]);
+            image.setImageResource(itemImages[i]);
+            return view1;
+
+
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.mymenu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    // handle button activities
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (t.onOptionsItemSelected(item))
+            return true;
+
+
+        if (id == R.id.mybutton) {
+
+            Intent intent = new Intent(MainActivity.this, AutoComplete.class);
+            startActivity(intent);
+
+        }
+
+        return super.onOptionsItemSelected(item);
+
+
+    }
+}
+
+
+
+
+

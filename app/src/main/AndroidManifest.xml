@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.estationery">
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name="com.example.estationery.ProductActivity"></activity>
+        <activity android:name="com.example.estationery.ChatActivity" />
+        <activity android:name="com.example.estationery.BuyActivity" />
+        <activity android:name="com.example.estationery.Register" />
+        <activity android:name="com.example.estationery.PostActivity" />
+        <activity
+            android:name="com.example.estationery.LoginActivity"
+            android:theme="@style/SplashTheme" />
+        <activity android:name="com.example.estationery.SellActivity" />
+        <activity
+            android:name="com.example.estationery.AutoComplete"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity android:name="com.example.estationery.MainActivity" />
+        <activity
+            android:name="com.example.estationery.SplashScreen"
+            android:theme="@style/SplashTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+</manifest>
